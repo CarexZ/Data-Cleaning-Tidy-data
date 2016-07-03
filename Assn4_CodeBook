@@ -1,0 +1,52 @@
+This is CODEBOOK for a tidy set ("tidyset.txt")
+Tidyset.txt contains data on 81 variables for 181 observations.
+
+In the experiments 30 volunteers aged from 19 to 48 yeats performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist and a number of different accelerometer data were collected. From this raw dataset we extracted measurements on the mean and standard deviation for each measurement. This resulted in a set with 10 299 observations. From these data we then created an independent dataset - tidy dataset.
+
+In the tidy dataset we selected variables from the initial dataset, containing  values for the variables and calculated average for each individual for each activity. 
+
+The final tidy dataset description is below, in the following order: 
+
+Column number - Column name - Column variables description - Possible values.
+
+V# - NAME       - Description 
+1 - SUBJECT     - Individuals performed exersises - 1 to 30.
+
+2 - ACTIVITY    - The activitiy perfomrd
+                    WALKING
+                    WALKING_UPSTAIRS
+                    WALKING_DOWNSTAIRS
+                    SITTING
+                    STANDING
+                    LAYING
+
+3-81 - MEASURED VARIABLES, AVERAGE, they contain
+    mean() - for mean values, 
+    std() - for standard deviation, 
+    XYZ - for each of 3  axis, if applicable for variable.
+        Variables list:
+        3-8 - tBodyAcc-XYZ - Mean and Standard deviation for Body acceleration signals for each of 3  axis
+        9-14 - tBodyAcc-XYZ - Standard deviation for Body acceleration signals for each of 3 axis
+        15-20 - tBodyAccJerk-XYZ
+        21-26 - tBodyGyro-XYZ
+        27-32 - tBodyGyroJerk-XYZ
+        33-34 - tBodyAccMag
+        35-36 - tGravityAccMag
+        37-38 - tBodyAccJerkMag
+        39-40 - tBodyGyroMag
+        41-42 - tBodyGyroJerkMag
+        43-48 - fBodyAcc-XYZ
+        49-51 - fBodyAcc-meanFreq-XYZ
+        52-57 - fBodyAccJerk-XYZ
+        58-60 - fBodyAccJerk-meanFreq-XYZ
+        61-66 - fBodyGyro-XYZ
+        67-69 - fBodyGyro-meanFreq-XYZ
+        70-71 - fBodyAccMag
+           72 - fBodyAccMag_meanFreq
+        73-74 - fBodyAccJerkMag
+           75 - fBodyAccJerkMag_meanFreq
+        76-77 - fBodyGyroMag
+           78 - fBodyGyroMag_meanFreq
+        79-80 - fBodyGyroJerkMag
+           81 - fBodyGyroJerkMag_meanFreq
+         
