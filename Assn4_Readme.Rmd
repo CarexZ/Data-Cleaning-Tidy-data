@@ -1,9 +1,23 @@
 ---
-title: "Untitled"
+title: "Readme"
 output: html_document
 ---
+This repository contains following files:
+Assn4_Readme.md - brief description
+Assn4_Run_analysis.R - script with comments
+tidyset.txt - final tidy dataset
+Assn4_CodeBook.md - tidyset description
 
-###Part1: Make merged set
+Assn4_run-analysis.R script does this:
+1) Merges the training and the test sets to create one data set.
+2) Extracts only the measurements on the mean and standard deviation for each measurement.
+3) Uses descriptive activity names to name the activities in the data set
+4) Appropriately labels the data set with descriptive variable names.
+5) From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+This tidyset.txt is also uploaded on coursera server.
+
+###Part1: Create merged Full dataset
+
 Read all the data from both sets to their own data.tables  
 Test set: 2947 measurements,   
 Train set: 7352.  
@@ -25,15 +39,15 @@ labels_train <- readLines("UCI HAR Dataset/train/y_train.txt")
 subject_train <- readLines("UCI HAR Dataset/train/subject_train.txt")
 ```
 
-Get all the variables with mean() and std(), total 79 variables and write them in names_ms vector  
+Get all the variables with mean() and std() (this will give 79 variables in total) and write them in names_ms vector  
 
 ```
 features_list <- readLines("UCI HAR Dataset/features.txt")
-mean_var <- grep("mean()", features_list) #choose all names with numbers mean()
-std_var <- grep("std()", features_list) #choose all names numbers with std()
+mean_var <- grep("mean()", features_list) #select all names order numbers with "mean()"
+std_var <- grep("std()", features_list) #select all names order numbers with "std()"
 mean_std <- sort(c(mean_var, std_var)) #all names numbers for mean and std together, ordered
 names_list <- features_list[mean_std] #all NAMES with mean and std
-#names in names_list have numbers in them, to delete them:
+#names in names_list look like "1 tBodyAcc-mean()-X", but I want to keep only "tBodyAcc-mean()-X" part. To delete these numbers:
 names_ms <- c(substring(names_list[c(1:6)],3), substring(names_list[c(7:16)], 4), substring(names_list[c(17:79)], 5)) 
 ```
 
@@ -61,20 +75,27 @@ Check dimension of a result, remember, we have 79 variables, so it should be lik
 dim(trimmed_test2)
 ```
 [1] 2947   79
-````
+
+```
 dim(trimmed_train2)
 ```
 [1] 7352   79
+
+
+Now merge together observations, subjects and activities in a single table - first for test set:
 
 ```
 library(data.table)
 test_set <- data.table(obs= 1: length(X_test), subject = subject_test, activity = labels_test, trimmed_test2)
 ```
 Again check dimension of a result, remember, we have 79 variables + subject + activity + we introduced obs for obsevation number here, so 82 in total  
+
 ```
 dim(test_set)
 ```
 [1] 2947   82  
+
+Then the same for train set:
 
 ```
 train_set <- data.table(obs= (length(X_test)+1): (length(X_train)+length(X_test)), subject = subject_train, activity = labels_train, trimmed_train2) #here we create continuous numbering, test observations will be from 1 to 2947 and train from 2948 to 10299 
@@ -90,6 +111,7 @@ fullset <- rbind(test_set, train_set)
 ```
 
 Relabel
+
 ```
 #----Check activities naming:----------------------------------------------
 > activities <- readLines("UCI HAR Dataset/activity_labels.txt")
@@ -111,7 +133,7 @@ relabel <- function(m, activities){
         m}
 
 #----Relabelling----------------------------------------------------------  
-fullset2 <- fullset #keep original fullset unaltered just in case
+fullset2 <- fullset #Here I keep original fullset unaltered just in case
 fullset2$activity <- relabel(fullset2$activity, activities) #relabel activitiy row
 
 ```
@@ -121,23 +143,13 @@ fullset2$activity <- relabel(fullset2$activity, activities) #relabel activitiy r
 
 ```
 library(plyr)
-#-----Count one variable by subject and activity---------------------------
+```
+
+------------------*This is explanation of the idea behind making tidy dataset, can be skipped*------------------------
+```
+#-----Count average for one variable by subject and activity---------------------------
 s <- fullset2[,.(mean(`1 tBodyAcc-mean()-X`)), by=.(subject, activity)]
-
-#----How to move to next variable?----------------------------------------
-z <- colnames(fullset2)
-
-as.name(z[8])
 ```
-`5 tBodyAcc-std()-Y`   
-
-Function as.name returns variable such as it can be used in column naming. But to use it we should use eval() function - at least at dplyr package!
-
-```
-#----------------------one by one--------------------------------
-s <- fullset2[,.(mean(eval(z[i]))), by=.(subject, activity)]
-s
-```   
 
 This is what now s looks like:  
   subject           activity        V1  
@@ -153,10 +165,11 @@ This is what now s looks like:
 179:      30 WALKING_DOWNSTAIRS 0.2831906  
 180:      30   WALKING_UPSTAIRS 0.2714156      
 
+Then we should add rows with other variables:
 
 ```
-s2 <- fullset2[,.(mean(`2 tBodyAcc-mean()-Y`)), by=.(subject, activity)]
-cbind(s, s2$V1)
+s2 <- fullset2[,.(mean(`2 tBodyAcc-mean()-Y`)), by=.(subject, activity)] #create a table for 2nd variable
+cbind(s, s2$V1) #cbind last row of this table to our table
 s3 <- fullset2[,.(mean(`3 tBodyAcc-mean()-Z`)), by=.(subject, activity)]
 cbind(s, s2$V1, s3$V1)
 ```
@@ -188,7 +201,21 @@ x
   5:   2 WALKING_DOWNSTAIRS 0.2776153        -0.022661416         -0.11681294  
 
 
-Now we have to options: we can create a function for creation of a tidy dataset   
+that is nice, but we have 79 column names, and we do not want to type each separately! Let's make a list of names
+
+```
+z <- colnames(fullset2) 
+as.name(z[8])
+```
+Output:
+`5 tBodyAcc-std()-Y`   
+
+Function as.name() returns variable name, in dplyr package we can use eval() on as.name() result to call the column
+Great, so we found a way 1) to merge columns properly and 2) to call a column with a name from the list of column names.
+
+Then we should do this for all 79 variables.
+
+We have two options: we can make a function...  
 
 ```
 #------------------Option 1: In the cycle!-----------------------------------------
@@ -203,7 +230,11 @@ tidy <- function(set){
 
         }
 ```
-Or make it part of the script with no function. I have chosen this option, as it is more simple and we use this only once.
+...Or make it part of the script with no function. I used this option, as it is simpler and I use it only once.
+
+--------------------*End of boring explanation*---------------------------
+
+
 
 ```
 #--------------Option 2: No function:--------------------------
@@ -215,7 +246,7 @@ Or make it part of the script with no function. I have chosen this option, as it
             s <- cbind(s, m$V1)}
         colnames(s) <- z[2:82]
 ```  
-Now the result is formally correct, but looks as a mess because of strange arrangement, so we will arrange it first by subject, then by activity
+Now the result is formally correct, but looks as a mess because of strange ordering, so we will arrange it first by subject, then by activity
 
 ```
     s$subject <- as.numeric(s$subject) #subject was a character vector, we make it numeric
@@ -229,7 +260,7 @@ Now the result is formally correct, but looks as a mess because of strange arran
     tidyset <- read.table("tidyset.txt")
 
 ```
-
+Now our tidyset is ready.
 
         
         

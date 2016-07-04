@@ -1,9 +1,9 @@
-This is CODEBOOK for a tidy set ("tidyset.txt")
+This is a CODEBOOK for a tidy set ("tidyset.txt")
 Tidyset.txt contains data on 81 variables for 181 observations.
 
-In the experiments 30 volunteers aged from 19 to 48 yeats performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist and a number of different accelerometer data were collected. From this raw dataset we extracted measurements on the mean and standard deviation for each measurement. This resulted in a set with 10 299 observations. From these data we then created an independent dataset - tidy dataset.
+In the experiments 30 volunteers aged from 19 to 48 years performed six activities (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist and a number of different accelerometer data were collected. From this Raw dataset we extracted measurements on the mean and standard deviation for each measurement. This resulted in a Full dataset with 10 299 observations. From these data we then created an independent dataset - Tidy dataset.
 
-In the tidy dataset we selected variables from the initial dataset, containing  values for the variables and calculated average for each individual for each activity. 
+In the Tidy dataset we selected variables from the initial dataset, containing  values for the variables and calculated average for each individual for each activity. 
 
 The final tidy dataset description is below, in the following order: 
 

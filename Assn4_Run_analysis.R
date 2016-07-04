@@ -104,10 +104,6 @@ relabel <- function(m, activities){
 fullset2 <- fullset #keep original fullset unaltered just in case
 fullset2$activity <- relabel(fullset2$activity, activities) #relabel activitiy row
 
-message("The first part of the script creates full dataset, which is a merged dataset for train and test sets. This is an intemediate dataset. It will be used to create a tidy data set")
-message("Full dataset is huge, its dimensions are:")
-print(dim(fullset2))
-
 ###Part2: Create a tidy set    
 
 
@@ -129,6 +125,10 @@ print(dim(fullset2))
             col.names = TRUE, qmethod = c("escape", "double"),
             fileEncoding = "")
     tidyset <- read.table("tidyset.txt")
+    
+    message("The first part of the script creates full dataset, which is a merged dataset for train and test sets. This is an intemediate dataset. It will be used to create a tidy data set")
+    message("Full dataset is huge, its dimensions are:")
+    print(dim(fullset2))
     message("The second part of the script creates a new dataset 'tidyset.txt'. This is a tidy set made from merged data of Full dataset, refer to Codebook for more detailed description")
     message("The tidy dataset is more compact compared to full set, its dimensions are:")
     print(dim(tidyset))
